@@ -1,0 +1,71 @@
+Python Script (Automated PDF Report Generation)
+python
+Copy
+Edit
+import pandas as pd
+from fpdf import FPDF
+from datetime import datetime
+
+# --- READ DATA ---
+df = pd.read_csv("data.csv")
+
+# --- ANALYZE DATA ---
+total_records = len(df)
+average_score = df["Score"].mean()
+highest_score = df["Score"].max()
+lowest_score = df["Score"].min()
+
+department_summary = df.groupby("Department").agg({"Score": ["mean", "max", "min"]})
+
+# --- GENERATE PDF REPORT ---
+class PDF(FPDF):
+    def header(self):
+        self.set_font("Arial", "B", 16)
+        self.cell(0, 10, "Employee Performance Report", ln=True, align="C")
+        self.ln(5)
+
+    def footer(self):
+        self.set_y(-15)
+        self.set_font("Arial", "I", 10)
+        self.cell(0, 10, f"Page {self.page_no()}", align="C")
+
+pdf = PDF()
+pdf.add_page()
+
+# Report Metadata
+pdf.set_font("Arial", "", 12)
+pdf.cell(0, 10, f"Report generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", ln=True)
+pdf.ln(5)
+
+# Overview Section
+pdf.set_font("Arial", "B", 14)
+pdf.cell(0, 10, "Overview:", ln=True)
+pdf.set_font("Arial", "", 12)
+pdf.cell(0, 10, f"Total Records: {total_records}", ln=True)
+pdf.cell(0, 10, f"Average Score: {average_score:.2f}", ln=True)
+pdf.cell(0, 10, f"Highest Score: {highest_score}", ln=True)
+pdf.cell(0, 10, f"Lowest Score: {lowest_score}", ln=True)
+pdf.ln(5)
+
+# Department-wise Summary
+pdf.set_font("Arial", "B", 14)
+pdf.cell(0, 10, "Department-wise Summary:", ln=True)
+pdf.set_font("Arial", "B", 12)
+pdf.cell(60, 10, "Department", 1)
+pdf.cell(40, 10, "Avg Score", 1)
+pdf.cell(40, 10, "Max Score", 1)
+pdf.cell(40, 10, "Min Score", 1)
+pdf.ln()
+
+pdf.set_font("Arial", "", 12)
+for dept, row in department_summary.iterrows():
+    pdf.cell(60, 10, dept, 1)
+    pdf.cell(40, 10, f"{row[('Score','mean')]:.2f}", 1)
+    pdf.cell(40, 10, f"{row[('Score','max')]}", 1)
+    pdf.cell(40, 10, f"{row[('Score','min')]}", 1)
+    pdf.ln()
+
+# Save PDF
+pdf.output("performance_report.pdf")
+
+print("PDF report 'performance_report.pdf' generated successfully.")
