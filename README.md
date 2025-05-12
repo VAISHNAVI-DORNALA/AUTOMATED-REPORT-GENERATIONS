@@ -83,3 +83,7 @@ Project and Operations Management: Summarizing task performance, project KPIs, o
 
 📌 Conclusion
 This Python script effectively demonstrates how simple yet powerful Python libraries like Pandas and FPDF can be combined to automate and simplify the creation of structured PDF reports. It saves valuable time, reduces the risk of human errors in report compilation, and ensures consistency in documentation. This solution is highly scalable and customizable for various reporting needs across industries.
+
+#$OUPUT 
+
+![Image](https://github.com/user-attachments/assets/4cfe864e-829f-4789-aa90-21b359bb32f5)
